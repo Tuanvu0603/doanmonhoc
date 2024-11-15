@@ -3,7 +3,8 @@ FROM python:3.10-slim
 
 # Đặt biến môi trường PYTHONUNBUFFERED để cho phép in ra thông tin trên console ngay lập tức, không đợi đến khi buffer đầy
 ENV PYTHONUNBUFFERED=1
-
+# Update and install necessary system dependencies
+RUN apt-get update && apt-get install -y build-essential libssl-dev
 # Tạo thư mục làm việc /app trong container
 WORKDIR /app
 
