@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nền Tảng Nghe Nhạc Trực Tuyến BIASONG - Tất cả bài hát</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <style>
+        /* Body styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: url("{{ url_for('static', filename='images/background01.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+        }
+
+        /* Header styling */
+        header {
+            background-color: #20232a;
+            color: #61dafb;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            box-sizing: border-box;
+            position: fixed;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        /* Navigation styling */
+        nav ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+            gap: 1rem;
+        }
+
+        nav a {
+            color: #61dafb;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #333;
+        }
+
+        /* Main content styling */
+        main {
+            width: 90%;
+            max-width: 1200px;
+            margin: 100px auto 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #282c34;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #3c3f41;
+            color: #61dafb;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #333;
+        }
+
+        tr:hover {
+            background-color: #444;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .btn-play {
+            background-color: #28a745;
+            padding: 10px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .btn-play:hover {
+            background-color: #218838;
+        }
+
+        .btn-play svg {
+            fill: #fff;
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Back button styling */
+        .index {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .index:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header section -->
+    <header>
+        <div class="header-logo">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+            <h1>BIASONG</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Trang chủ</a></li>
+                <li><a href="{{ url_for('search') }}">Tìm kiếm</a></li>
+                <li class="active"><a href="{{ url_for('allsongs') }}">Đăng tải bài hát</a></li>
+                <li><a href="{{ url_for('songs') }}">Nghe nhạc</a></li>
+                <li><a href="{{ url_for('logout') }}">Đăng xuất ({{ session['username'] }})</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main content section -->
+    <main>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Path</th>
+                    <th>Album</th>
+                    <th>Tên</th>
+                    <th>Nghệ sĩ</th>
+                    <th>Lượt nghe</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for song in songs %}
+                    <tr>
+                        <td>{{ song[0] }}</td>
+                        <td>{{ song[1] }}</td>
+                        <td>{{ song[2] }}</td>
+                        <td>{{ song[3] }}</td>
+                        <td>{{ song[4] }}</td>
+                        <td>{{ song[5] }}</td>
+                        <td>
+                            <form action="{{ url_for('delete_song', song_id=song[0]) }}" method="POST" style="display: inline;">
+                                <button type="submit" class="btn btn-danger">Xóa</button>
+                            </form>
+                            <form action="{{ url_for('play_song', song_id=song[0]) }}" method="GET" style="display: inline;">
+                                <button type="submit" class="btn btn-play">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z"></path>
+                                    </svg>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ url_for('allsongs') }}" class="index">Trở về</a>
+    </main>
+</body>
+</html>

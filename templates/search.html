@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tìm Kiếm - Nền Tảng Nghe Nhạc Trực Tuyến BIASONG</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <style>
+        /* General body styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: url("{{ url_for('static', filename='images/background01.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+        }
+
+        /* Header styling */
+        header {
+            background-color: #20232a;
+            color: #61dafb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+
+        /* Logo styling */
+        .header-logo img {
+            width: 40px;
+            height: auto;
+            margin-right: 10px;
+        }
+
+        /* Navigation styling */
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav a {
+            color: #61dafb;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #333;
+        }
+
+        /* Main content styling */
+        main {
+            padding: 80px 5% 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            color: #20232a;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Search form styling */
+        form {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+            font-size: 1rem;
+        }
+
+        input[type="text"]:focus {
+            border-color: #61dafb;
+            outline: none;
+        }
+
+        button[type="submit"] {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-size: 1rem;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #555;
+        }
+
+        /* Search result table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        td img {
+            width: 80px;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        /* Back button styling */
+        button.index {
+            background-color: #28a745;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            margin: 2rem 0 0;
+            display: block;
+            width: 100%;
+            max-width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+
+        button.index:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header section with navigation -->
+    <header>
+        <div class="header-logo">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+            <h1>Nền Tảng Nghe Nhạc Trực Tuyến BIASONG</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Trang chủ</a></li>
+                <li><a href="{{ url_for('search') }}">Tìm kiếm</a></li>
+                <li><a href="{{ url_for('allsongs') }}">Đăng tải bài hát</a></li>
+                <li class="active"><a href="{{ url_for('songs') }}">Nghe nhạc</a></li>
+                <li><a href="{{ url_for('logout') }}">Đăng xuất ({{ session['username'] }})</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main content section -->
+    <main>
+        <h2>Tìm Kiếm Bài Hát</h2>
+        <form action="/search" method="GET">
+            <input type="text" id="q" name="q" placeholder="Nhập tên bài hát hoặc nghệ sĩ..." required>
+            <button type="submit">Tìm</button>
+        </form>
+
+        <!-- Search results table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Hình ảnh</th>
+                    <th>Tên bài hát</th>
+                    <th>Album</th>
+                    <th>Ca sĩ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr>
+                    <td><img src="{{ result[1] }}" alt="Album Image"></td>
+                    <td>{{ result[2] }}</td>
+                    <td>{{ result[3] }}</td>
+                    <td>{{ result[4] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Back button -->
+        <a href="{{ url_for('index') }}">
+            <button type="button" class="index">Trở về</button>
+        </a>
+    </main>
+</body>
+</html>

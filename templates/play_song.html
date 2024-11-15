@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BIASONG - Nghe Nhạc</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <style>
+        /* General body styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: url("{{ url_for('static', filename='images/background01.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+        }
+
+        /* Header styling */
+        header {
+            background-color: #20232a;
+            color: #61dafb;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            position: fixed;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-logo img {
+            width: 40px;
+            margin-right: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav a {
+            color: #61dafb;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #333;
+        }
+
+        /* Main content styling */
+        .container {
+            max-width: 960px;
+            margin: 120px auto 40px;
+            padding: 30px;
+            background-color: #282c34;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            color: #f1f1f1;
+            text-align: center;
+        }
+
+        .song-info h2 {
+            font-size: 2.5rem;
+            color: #61dafb;
+            margin-bottom: 10px;
+        }
+
+        .song-info p {
+            font-size: 1.2rem;
+            color: #b3b3b3;
+        }
+
+        /* Audio player styling */
+        audio {
+            margin-top: 1.5rem;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        /* Button styling */
+        .download-button {
+            background-color: #1d1d1d;
+            color: #fff;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin-top: 20px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .download-button:hover {
+            background-color: #333;
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header section -->
+    <header>
+        <div class="header-logo">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+            <h1>BIASONG</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Trang chủ</a></li>
+                <li><a href="{{ url_for('search') }}">Tìm kiếm</a></li>
+                <li><a href="{{ url_for('allsongs') }}">Đăng tải bài hát</a></li>
+                <li class="active"><a href="{{ url_for('songs') }}">Nghe nhạc</a></li>
+                <li><a href="{{ url_for('logout') }}">Đăng xuất ({{ session['username'] }})</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main content section -->
+    <div class="container">
+        <div class="song-info">
+            <h2>{{ song_name }}</h2>
+            <p>Lượt nghe: {{ views }}</p>
+        </div>
+
+        <!-- Audio player -->
+        <audio controls>
+            <source src="{{ src }}" type="audio/mpeg">
+            Trình duyệt của bạn không hỗ trợ trình phát nhạc.
+        </audio>
+
+        <!-- Download button -->
+        <a href="{{ src }}" download>
+            <button class="download-button">Tải bài nhạc xuống</button>
+        </a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,36 @@
+version: '3.8'  # Phiên bản của Docker Compose
+
+services:  # Khai báo các dịch vụ trong ứng dụng
+  web:  # Dịch vụ web
+    build: .  # Xây dựng hình ảnh từ thư mục hiện tại
+    ports:  # Cấu hình cổng
+      - "5001:5001"  # Bản đồ cổng 5001 của máy chủ với cổng 5001 của container
+    volumes:  # Gắn kết các thư mục
+      - .:/app  # Gắn thư mục hiện tại vào thư mục /app trong container
+    environment:  # Biến môi trường cho dịch vụ web
+      - FLASK_ENV=development  # Thiết lập chế độ phát triển cho Flask
+      - FLASK_APP=app.py  # Đặt tên tệp ứng dụng Flask
+      - DATABASE_URL=postgresql://user:password@db:5432/finance_db  # Địa chỉ kết nối đến cơ sở dữ liệu PostgreSQL
+    command: >  # Lệnh để chạy khi khởi động dịch vụ
+      sh -c "
+        flask db init &&  # Khởi tạo cơ sở dữ liệu
+        flask db migrate &&  # Tạo các di chuyển cho cơ sở dữ liệu
+        flask db upgrade &&  # Cập nhật cơ sở dữ liệu lên phiên bản mới nhất
+        flask run --host=0.0.0.0 --port=5001  # Chạy ứng dụng Flask trên cổng 5001
+      "
+    depends_on:  # Các dịch vụ mà dịch vụ này phụ thuộc vào
+      - db  # Dịch vụ database
+
+  db:  # Dịch vụ cơ sở dữ liệu
+    image: postgres:13  # Sử dụng hình ảnh PostgreSQL phiên bản 13
+    environment:  # Biến môi trường cho dịch vụ cơ sở dữ liệu
+      POSTGRES_USER: root  # Tên người dùng PostgreSQL
+      POSTGRES_PASSWORD: 123456  # Mật khẩu cho người dùng PostgreSQL
+      POSTGRES_DB: music_streaming  # Tên cơ sở dữ liệu được tạo ra
+    ports:  # Cấu hình cổng cho dịch vụ database
+      - "5432:5432"  # Bản đồ cổng 5432 của máy chủ với cổng 5432 của container
+    volumes:  # Gắn kết các thư mục cho dữ liệu
+      - postgres_data:/var/lib/postgresql/data  # Gắn volume để lưu trữ dữ liệu PostgreSQL
+
+volumes:  # Khai báo các volume
+  postgres_data:  # Volume để lưu trữ dữ liệu của PostgreSQL
