@@ -10,7 +10,8 @@ services:
     environment:
       - FLASK_ENV=development
       - FLASK_APP=app.py
-      - DATABASE_URL=mysql+pymysql://root:123456@db:3306/music_streaming  # Địa chỉ kết nối đến cơ sở dữ liệu MySQL
+      - SECRET_KEY=default_secret_key
+      - SALT=default_salt
     command: >
       sh -c "
         flask db init &&
@@ -22,17 +23,15 @@ services:
       - db
 
   db:
-    image: mysql:8.0  # Sử dụng hình ảnh MySQL phiên bản 8.0
+    image: mysql:8.0
     environment:
-      MYSQL_HOST : localhost 
-      MYSQL_DATABASE: music_streaming  # Tên cơ sở dữ liệu mặc định
-      MYSQL_USER: root  # Tên người dùng MySQL
-      MYSQL_PASSWORD: 123456  # Mật khẩu cho người dùng
+      MYSQL_DATABASE: music_streaming
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 123456
     ports:
-      - "3306:3306"  # Bản đồ cổng 3306 của máy chủ với cổng 3306 của container
+      - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql  # Gắn volume để lưu trữ dữ liệu MySQL
+      - mysql_data:/var/lib/mysql
 
 volumes:
-  mysql_data:  # Volume để lưu trữ dữ liệu của MySQL
-
+  mysql_data: mysql_data:/var/lib/mysql
