@@ -24,7 +24,7 @@ services:
   db:
     image: mysql:8.0  # Sử dụng hình ảnh MySQL phiên bản 8.0
     environment:
-      MYSQL_ROOT_PASSWORD: 123456  # Mật khẩu root cho MySQL
+      MYSQL_HOST : localhost 
       MYSQL_DATABASE: music_streaming  # Tên cơ sở dữ liệu mặc định
       MYSQL_USER: root  # Tên người dùng MySQL
       MYSQL_PASSWORD: 123456  # Mật khẩu cho người dùng
