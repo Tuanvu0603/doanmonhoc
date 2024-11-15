@@ -3,8 +3,16 @@ FROM python:3.10-slim
 
 # Đặt biến môi trường PYTHONUNBUFFERED để cho phép in ra thông tin trên console ngay lập tức, không đợi đến khi buffer đầy
 ENV PYTHONUNBUFFERED=1
-# Update and install necessary system dependencies
-RUN apt-get update && apt-get install -y build-essential libssl-dev
+
+# Update and install necessary system dependencies for MySQL
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    libssl-dev \
+    default-libmysqlclient-dev \
+    pkg-config && \
+    rm -rf /var/lib/apt/lists/*  # Giảm dung lượng ảnh Docker bằng cách xóa bộ nhớ cache của apt
+
 # Tạo thư mục làm việc /app trong container
 WORKDIR /app
 
